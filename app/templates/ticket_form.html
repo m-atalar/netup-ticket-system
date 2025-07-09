@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Yeni Destek Talebi{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Destek Talebi Oluştur</h2>
+<form method="POST">
+    <div class="mb-3">
+        <label for="company_name" class="form-label">Firma Adı</label>
+        <input type="text" class="form-control" id="company_name" name="company_name" required>
+    </div>
+    <div class="mb-3">
+        <label for="contact_name" class="form-label">İlgili Kişi</label>
+        <input type="text" name="contact_name" class="form-control" value="{{ current_user.username }}" readonly>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">E-posta</label>
+        <input type="email" class="form-control" id="email" name="email" required>
+    </div>
+    <div class="mb-3">
+        <label for="title" class="form-label">Konu</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Açıklama</label>
+        <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="category" class="form-label">Kategori</label>
+        <select class="form-select" id="category" name="category">
+            <option>Logo Tiger</option>
+            <option>e-Fatura</option>
+            <option>Bordro</option>
+            <option>Diğer</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="priority" class="form-label">Aciliyet</label>
+        <select class="form-select" id="priority" name="priority">
+            <option value="Düşük">Düşük</option>
+            <option value="Orta">Orta</option>
+            <option value="Yüksek">Yüksek</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Gönder</button>
+</form>
+{% endblock %}

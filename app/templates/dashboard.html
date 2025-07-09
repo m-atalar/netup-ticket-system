@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Yönetici Paneli{% endblock %}
+
+{% block content %}
+<h2 class="mb-4 d-flex justify-content-between align-items-center">
+    Hoş Geldiniz, Yönetici
+    <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-danger btn-sm">Çıkış Yap</a>
+</h2>
+
+<div class="row text-center mb-4">
+    <div class="col-md-3">
+        <div class="card p-3 bg-primary text-white">
+            <h5>Toplam Talep</h5>
+            <h3>{{ total }}</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 bg-warning text-dark">
+            <h5>Bekliyor</h5>
+            <h3>{{ waiting }}</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 bg-info text-white">
+            <h5>Üzerinde Çalışılıyor</h5>
+            <h3>{{ working }}</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 bg-success text-white">
+            <h5>Çözüldü</h5>
+            <h3>{{ resolved }}</h3>
+        </div>
+    </div>
+</div>
+
+{% if last_ticket %}
+<div class="card p-3 mb-4">
+    <h5>Son Talep</h5>
+    <p><strong>{{ last_ticket.title }}</strong> - {{ last_ticket.company_name }}</p>
+    <p>Durum: {{ last_ticket.status }} | Tarih: {{ last_ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+</div>
+{% endif %}
+
+<div class="d-flex gap-2">
+    <a href="{{ url_for('tickets.list_tickets') }}" class="btn btn-outline-primary">Tüm Talepler</a>
+    <a href="{{ url_for('tickets.export_tickets') }}" class="btn btn-outline-success">CSV İndir</a>
+    <a href="{{ url_for('tickets.export_report_pdf') }}" class="btn btn-outline-danger">PDF Rapor</a>
+</div>
+{% endblock %}

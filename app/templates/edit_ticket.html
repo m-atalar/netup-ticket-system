@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Talep Güncelle{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Destek Talebi Güncelle</h2>
+
+<form method="POST">
+    <div class="mb-3">
+        <label class="form-label">Firma Adı</label>
+        <input type="text" name="company_name" class="form-control" value="{{ ticket.company_name }}" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">İlgili Kişi</label>
+        <input type="text" name="contact_name" class="form-control" value="{{ ticket.contact_name }}" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">E-posta</label>
+        <input type="email" name="email" class="form-control" value="{{ ticket.email }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Konu</label>
+        <input type="text" name="title" class="form-control" value="{{ ticket.title }}" required>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Açıklama</label>
+        <textarea name="description" class="form-control" rows="3">{{ ticket.description }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Kategori</label>
+        <input type="text" name="category" class="form-control" value="{{ ticket.category }}">
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Aciliyet</label>
+        <select name="priority" class="form-select">
+            <option value="Düşük" {% if ticket.priority == 'Düşük' %}selected{% endif %}>Düşük</option>
+            <option value="Orta" {% if ticket.priority == 'Orta' %}selected{% endif %}>Orta</option>
+            <option value="Yüksek" {% if ticket.priority == 'Yüksek' %}selected{% endif %}>Yüksek</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label">Durum</label>
+        <select name="status" class="form-select">
+            <option value="Bekliyor" {% if ticket.status == 'Bekliyor' %}selected{% endif %}>Bekliyor</option>
+            <option value="Üzerinde Çalışılıyor" {% if ticket.status == 'Üzerinde Çalışılıyor' %}selected{% endif %}>Üzerinde Çalışılıyor</option>
+            <option value="Çözüldü" {% if ticket.status == 'Çözüldü' %}selected{% endif %}>Çözüldü</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Güncelle</button>
+    <a href="{{ url_for('tickets.list_tickets') }}" class="btn btn-secondary">İptal</a>
+</form>
+{% endblock %}
