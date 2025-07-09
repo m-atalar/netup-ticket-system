@@ -41,3 +41,23 @@ cd netup-ticket-system
 python -m venv venv
 venv\Scripts\activate   # (Linux/macOS: source venv/bin/activate)
 pip install -r requirements.txt
+
+## 📷 Ekran Görüntüleri
+
+### 🔐 Giriş Ekranı
+![Login](screenshots/login.png)
+
+### 🧭 Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### 📋 Destek Talepleri (Admin)
+![Tickets](screenshots/tickets.png)
+
+### 👨‍💼 Agent Talepleri
+![My Tickets](screenshots/my_tickets.png)
+
+### 📝 Yeni Talep Oluştur
+![Create Ticket](screenshots/create_ticket.png)
+
+### 📄 PDF Rapor Görüntüsü
+![PDF Report](screenshots/pdf_report.png)
