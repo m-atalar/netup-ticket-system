@@ -23,8 +23,10 @@ def create_app():
     # Blueprintleri ekle
     from .routes import tickets
     from .routes import auth
+    from app.routes.main import main_bp
     app.register_blueprint(tickets.bp)
     app.register_blueprint(auth.bp)
+    app.register_blueprint(main_bp)
 
     @app.errorhandler(403)
     def forbidden(e):
