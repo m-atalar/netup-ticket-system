@@ -7,11 +7,13 @@ db = SQLAlchemy()
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=True, index=True)  # ← EKLENDİ
     password_hash = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(20), default='agent')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     tickets = db.relationship('Ticket', backref='assigned_user', lazy=True)
+
 
 class Ticket(db.Model):
     id = db.Column(db.Integer, primary_key=True)

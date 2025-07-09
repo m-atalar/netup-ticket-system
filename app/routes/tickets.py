@@ -7,6 +7,13 @@ from functools import wraps
 
 bp = Blueprint('tickets', __name__, url_prefix='/ticket')
 
+def check_permission(ticket):
+    if current_user.role == 'admin':
+        return  # Her şeye erişebilir
+    if current_user.role == 'agent' and ticket.contact_name == current_user.username:
+        return  # Sadece kendi talebine erişebilir
+    abort(403)  # Diğer durumlarda erişim reddedilir
+
 # 🔐 Admin yetkisi gerektiren işlemler için
 def admin_required(f):
     @wraps(f)
@@ -22,8 +29,13 @@ def admin_required(f):
 def create_ticket():
     if request.method == 'POST':
         company_name = request.form['company_name']
-        contact_name = current_user.username  # eski: request.form['contact_name']
-        email = request.form['email']
+        # Eğer giriş yapan agent ise onun bilgileriyle doldur
+        if current_user.role == 'agent':
+            contact_name = current_user.username
+            email = current_user.email
+        else:
+            contact_name = request.form['contact_name']
+            email = request.form['email']
         title = request.form['title']
         description = request.form['description']
         category = request.form['category']
@@ -250,20 +262,45 @@ def export_report_pdf():
 @bp.route('/my-tickets')
 @login_required
 def my_tickets():
-    # Admin tüm talepleri görebilir
-    if current_user.role == 'admin':
-        return redirect(url_for('tickets.list_tickets'))
+    q = request.args.get('q', '').lower()
 
-    # Agent sadece kendi açtığı talepleri görür
-    tickets = Ticket.query.filter_by(contact_name=current_user.username).order_by(Ticket.created_at.desc()).all()
+    query = Ticket.query.filter_by(contact_name=current_user.username)
 
-    return render_template('my_tickets.html', tickets=tickets)
+    if q:
+        query = query.filter(
+            (Ticket.company_name.ilike(f'%{q}%')) |
+            (Ticket.title.ilike(f'%{q}%')) |
+            (Ticket.status.ilike(f'%{q}%'))
+        )
+
+    tickets = query.order_by(Ticket.created_at.desc()).all()
+
+    # 🔢 İstatistikler
+    total = len(tickets)
+    waiting = len([t for t in tickets if t.status == 'Bekliyor'])
+    working = len([t for t in tickets if t.status == 'Üzerinde Çalışılıyor'])
+    resolved = len([t for t in tickets if t.status == 'Çözüldü'])
+
+    last_ticket = tickets[0] if tickets else None
+
+    return render_template(
+        'my_tickets.html',
+        tickets=tickets,
+        total=total,
+        waiting=waiting,
+        working=working,
+        resolved=resolved,
+        last_ticket=last_ticket
+    )
+
+
 
 @bp.route('/admin/tickets/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def edit_ticket(id):
     ticket = Ticket.query.get_or_404(id)
+    check_permission(ticket)
 
     if request.method == 'POST':
         ticket.company_name = request.form['company_name']
@@ -286,6 +323,7 @@ def edit_ticket(id):
 @admin_required
 def delete_ticket(id):
     ticket = Ticket.query.get_or_404(id)
+    check_permission(ticket)
     db.session.delete(ticket)
     db.session.commit()
     flash(f"Ticket #{ticket.id} silindi.", "warning")

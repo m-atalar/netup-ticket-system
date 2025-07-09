@@ -35,7 +35,10 @@
 </div>
 
 <!-- 📊 Destek Durum Grafiği -->
-<canvas id="ticketChart" width="400" height="150" class="mb-4"></canvas>
+<div class="mb-4 d-flex justify-content-center">
+    <canvas id="ticketChart" style="max-width: 600px; max-height: 300px; width: 100%;"></canvas>
+</div>
+
 
 <!-- 📋 Destek Talepleri Tablosu -->
 <table class="table table-striped">
@@ -58,7 +61,17 @@
             <td>{{ ticket.company_name }}</td>
             <td>{{ ticket.contact_name }}</td>
             <td>{{ ticket.title }}</td>
-            <td>{{ ticket.status }}</td>
+            <td>
+                {% if ticket.status == 'Bekliyor' %}
+                    <span class="badge bg-secondary">{{ ticket.status }}</span>
+                {% elif ticket.status == 'Üzerinde Çalışılıyor' %}
+                    <span class="badge bg-warning text-dark">{{ ticket.status }}</span>
+                {% elif ticket.status == 'Çözüldü' %}
+                    <span class="badge bg-success">{{ ticket.status }}</span>
+                {% else %}
+                    <span class="badge bg-light text-dark">{{ ticket.status }}</span>
+                {% endif %}
+            </td>
             <td>{{ ticket.priority }}</td>
             <td>{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
             <td>

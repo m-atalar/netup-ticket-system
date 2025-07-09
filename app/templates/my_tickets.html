@@ -4,7 +4,48 @@
 
 {% block content %}
 <h2 class="mb-4">Destek Taleplerim</h2>
+<!-- 🧮 Mini Dashboard -->
+<div class="row text-center mb-4">
+    <div class="col-md-3">
+        <div class="card p-3 bg-primary text-white">
+            <h5>Toplam</h5>
+            <h3>{{ total }}</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 bg-warning text-dark">
+            <h5>Bekliyor</h5>
+            <h3>{{ waiting }}</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 bg-info text-white">
+            <h5>Üzerinde</h5>
+            <h3>{{ working }}</h3>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card p-3 bg-success text-white">
+            <h5>Çözüldü</h5>
+            <h3>{{ resolved }}</h3>
+        </div>
+    </div>
+</div>
 
+<!-- 🧾 Son Talep -->
+{% if last_ticket %}
+<div class="card p-3 mb-4">
+    <h5>Son Talebin</h5>
+    <p><strong>{{ last_ticket.title }}</strong> - {{ last_ticket.company_name }}</p>
+    <p>Durum: {{ last_ticket.status }} | Tarih: {{ last_ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</p>
+</div>
+{% endif %}
+<form method="GET" class="mb-3">
+    <div class="input-group">
+        <input type="text" name="q" class="form-control" placeholder="Konu, firma veya durum ara..." value="{{ request.args.get('q', '') }}">
+        <button class="btn btn-outline-secondary" type="submit">Ara</button>
+    </div>
+</form>
 <table class="table table-striped">
     <thead>
         <tr>
@@ -22,7 +63,18 @@
             <td>{{ ticket.id }}</td>
             <td>{{ ticket.company_name }}</td>
             <td>{{ ticket.title }}</td>
-            <td>{{ ticket.status }}</td>
+            <td>
+                {% if ticket.status == 'Bekliyor' %}
+                    <span class="badge bg-secondary">{{ ticket.status }}</span>
+                {% elif ticket.status == 'Üzerinde Çalışılıyor' %}
+                    <span class="badge bg-warning text-dark">{{ ticket.status }}</span>
+                {% elif ticket.status == 'Çözüldü' %}
+                    <span class="badge bg-success">{{ ticket.status }}</span>
+                {% else %}
+                    <span class="badge bg-light text-dark">{{ ticket.status }}</span>
+                {% endif %}
+            </td>
+
             <td>{{ ticket.priority }}</td>
             <td>{{ ticket.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
         </tr>
