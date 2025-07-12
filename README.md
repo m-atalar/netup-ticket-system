@@ -61,6 +61,15 @@ veya ücretsiz bir VPN/DNS çözümü olan Cloudflare Warp uygulamasını indiri
 Sonra tekrar komutu çalıştırın: pip install -r requirements.txt
 ```
 
+## ✅ Uygulamayı Başlatma
+Kurulum tamamlandıktan sonra Flask uygulamasını çalıştırmak için:
+
+python run.py
+Ardından tarayıcıda şu adrese git:
+
+http://127.0.0.1:5000
+
+
 ## 📷 Ekran Görüntüleri
 
 ### 🔐 Giriş Ekranı
