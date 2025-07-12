@@ -46,27 +46,19 @@ venv\Scripts\activate   # (Linux/macOS: source venv/bin/activate)
 # Gerekli paketleri yükle
 pip install -r requirements.txt
 
-# Veritabanını başlat
-flask db init
-flask db migrate -m "Initial migration"
-flask db upgrade
+# Veritabanını başlat ve örnek kullanıcıları oluştur
+python setup.py
 
-# Python terminaline gir
-python
-# Aşağıdaki komutları sırasıyla gir (kullanıcı oluşturmak için)
-from app import create_app, db
-from app.models import User
-from flask_bcrypt import Bcrypt
+🔐 Not: setup.py dosyası, veritabanını oluşturur ve admin/agent kullanıcılarını yalnızca ilk çalıştırmada ekler.
+Bu dosyayı tekrar çalıştırmak projenize zarar vermez.
 
-app = create_app()
-app.app_context().push()
-bcrypt = Bcrypt()
+🌐 Not: pip install Hatası Çözümü
+Bazı ağlarda pip install -r requirements.txt komutu sırasında bağlantı hatası alınabilir (ConnectionResetError).
 
-admin = User(username="admin", password_hash=bcrypt.generate_password_hash("admin123").decode('utf-8'), role="admin", email="admin@example.com")
-agent = User(username="agent", password_hash=bcrypt.generate_password_hash("agent123").decode('utf-8'), role="agent", email="agent@example.com")
+✅ Çözüm: Antivirüs veya güvenlik duvarınızı geçici olarak devre dışı bırakmayı deneyin,
+veya ücretsiz bir VPN/DNS çözümü olan Cloudflare Warp uygulamasını indirip etkinleştirin → https://1.1.1.1/
 
-db.session.add_all([admin, agent])
-db.session.commit()
+Sonra tekrar komutu çalıştırın: pip install -r requirements.txt
 ```
 
 ## 📷 Ekran Görüntüleri

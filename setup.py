@@ -26,8 +26,16 @@ agent = User(
 )
 
 # Veritabanına ekle
-db.session.add(admin)
-db.session.add(agent)
+if not User.query.filter_by(email="admin@example.com").first():
+    db.session.add(admin)
+if not User.query.filter_by(email="agent@example.com").first():
+    db.session.add(agent)
+if not User.query.filter_by(username="admin").first():
+    db.session.add(admin)
+if not User.query.filter_by(username="admin").first():
+    db.session.add(admin)
+
+
 db.session.commit()
 
 print("✅ Admin ve Agent kullanıcıları başarıyla oluşturuldu.")
