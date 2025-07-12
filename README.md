@@ -67,20 +67,25 @@ agent = User(username="agent", password_hash=bcrypt.generate_password_hash("agen
 
 db.session.add_all([admin, agent])
 db.session.commit()
-'''
+```
 
 ## 📷 Ekran Görüntüleri
-🔐 Giriş Ekranı
 
+### 🔐 Giriş Ekranı
+![Login](screenshots/login.png)
 
-📝 Yeni Destek Talebi Oluştur
+### 📝 Yeni Destek Talebi Oluştur
+![Create Ticket](screenshots/new_ticket.png)
 
-📋 Tüm Destek Talepleri (Admin)
+### 📋 Tüm Destek Talepleri (Admin)
+![All Tickets](screenshots/all_tickets.png)
 
-🧭 Admin Dashboard
+### 🧭 Admin Dashboard
+![Dashboard](screenshots/dashboard.png)
 
+### 📄 Talep Detayları ve Yorumlar
+![Ticket Detail](screenshots/ticket_detail_comment.png)
 
-📄 Talep Detayları ve Yorumlar
 
 
 📌 Not
