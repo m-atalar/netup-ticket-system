@@ -52,6 +52,8 @@
             <th>Aciliyet</th>
             <th>Tarih</th>
             <th>Aksiyon</th>
+            <th>İşlem</th>
+
         </tr>
     </thead>
     <tbody>
@@ -83,6 +85,9 @@
                     <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
                 </form>
             </td>
+            <td>
+                <a href="{{ url_for('tickets.ticket_detail', id=ticket.id) }}" class="btn btn-sm btn-outline-secondary">Detay</a>
+            </td>            
         </tr>
         {% else %}
         <tr>

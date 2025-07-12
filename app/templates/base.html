@@ -8,9 +8,10 @@
 </head>
 <body class="bg-light">
     <div class="container mt-4">
+        {% if not hide_navbar %}
         <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#">Destek Paneli</a>
+                <a class="navbar-brand" href="#">Netup Destek Paneli</a>
                 <div>
                     {% if current_user.is_authenticated %}
                         {% if current_user.role == 'admin' %}
@@ -26,6 +27,7 @@
                 </div>
             </div>
         </nav>
+        {% endif %}
 
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -40,6 +42,14 @@
 
         {% block content %}{% endblock %}
     </div>
+
+    <script>
+      // Flash mesajları 3 saniye sonra kaybolsun
+      setTimeout(() => {
+        const alert = document.querySelector('.alert');
+        if (alert) alert.remove();
+      }, 3000);
+    </script>
 
     {% block scripts %}{% endblock %}
 </body>

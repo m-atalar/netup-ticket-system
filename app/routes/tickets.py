@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, make_response, abort
 from flask_login import login_required, current_user
-from app.models import db, Ticket
+from app.models import db, Ticket, Comment
 from datetime import datetime
 import csv, io, pdfkit
 from functools import wraps
@@ -264,7 +264,7 @@ def export_report_pdf():
 def my_tickets():
     q = request.args.get('q', '').lower()
 
-    query = Ticket.query.filter_by(contact_name=current_user.username)
+    query = Ticket.query
 
     if q:
         query = query.filter(
@@ -275,13 +275,15 @@ def my_tickets():
 
     tickets = query.order_by(Ticket.created_at.desc()).all()
 
-    # 🔢 İstatistikler
-    total = len(tickets)
-    waiting = len([t for t in tickets if t.status == 'Bekliyor'])
-    working = len([t for t in tickets if t.status == 'Üzerinde Çalışılıyor'])
-    resolved = len([t for t in tickets if t.status == 'Çözüldü'])
+    # Sadece kendi talepleri üzerinden istatistik çıkar
+    own_tickets = [t for t in tickets if t.contact_name == current_user.username]
 
-    last_ticket = tickets[0] if tickets else None
+    total = len(own_tickets)
+    waiting = len([t for t in own_tickets if t.status == 'Bekliyor'])
+    working = len([t for t in own_tickets if t.status == 'Üzerinde Çalışılıyor'])
+    resolved = len([t for t in own_tickets if t.status == 'Çözüldü'])
+
+    last_ticket = own_tickets[0] if own_tickets else None
 
     return render_template(
         'my_tickets.html',
@@ -328,3 +330,47 @@ def delete_ticket(id):
     db.session.commit()
     flash(f"Ticket #{ticket.id} silindi.", "warning")
     return redirect(url_for('tickets.list_tickets'))
+
+@bp.route('/my-tickets/delete/<int:id>', methods=['POST'])
+@login_required
+def agent_delete_ticket(id):
+    ticket = Ticket.query.get_or_404(id)
+
+    # Sadece kendi oluşturduğu ticket'ı silebilir
+    if current_user.role == 'agent' and ticket.contact_name == current_user.username:
+        db.session.delete(ticket)
+        db.session.commit()
+        flash(f"Talebiniz (#{ticket.id}) silindi.", "warning")
+    else:
+        flash("Bu talebi silme yetkiniz yok.", "danger")
+
+    return redirect(url_for('tickets.my_tickets'))
+
+
+# 🔹 Ticket Detay Sayfası + Yorum Gönderme
+@bp.route('/<int:id>', methods=['GET', 'POST'])
+@login_required
+def ticket_detail(id):
+    ticket = Ticket.query.get_or_404(id)
+
+    # Yalnızca admin veya ilgili kişi görebilir
+    if current_user.role != 'admin' and ticket.contact_name != current_user.username:
+        abort(403)
+
+    if request.method == 'POST':
+        content = request.form.get('content')
+        if content:
+            comment = Comment(
+                ticket_id=id,
+                user=current_user.username,
+                content=content,
+                created_at=datetime.utcnow()
+            )
+            db.session.add(comment)
+            db.session.commit()
+            flash("Yorum başarıyla eklendi.", "success")
+            return redirect(url_for('tickets.ticket_detail', id=id))
+
+    comments = Comment.query.filter_by(ticket_id=id).order_by(Comment.created_at.desc()).all()
+    return render_template('ticket_detail.html', ticket=ticket, comments=comments)
+

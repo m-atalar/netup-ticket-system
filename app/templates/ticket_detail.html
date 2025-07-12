@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Destek Talep Detayı{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Talep Detayı</h3>
+    <div class="card p-3 mb-4">
+        <p><strong>Konu:</strong> {{ ticket.title }}</p>
+        <p><strong>Firma:</strong> {{ ticket.company_name }}</p>
+        <p><strong>Açıklama:</strong> {{ ticket.description }}</p>
+        <p><strong>Durum:</strong> {{ ticket.status }}</p>
+        <p><strong>Aciliyet:</strong> {{ ticket.priority }}</p>
+    </div>
+
+    <h5>Yorumlar</h5>
+    {% for comment in comments %}
+        <div class="mb-3 p-3 border rounded bg-light">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <strong>{{ comment.user.username }}</strong>
+                <small class="text-muted">{{ comment.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+            </div>
+            <p class="mb-0">{{ comment.content }}</p>
+        </div>
+    {% else %}
+        <p class="text-muted">Henüz yorum yok.</p>
+    {% endfor %}
+
+    <form method="POST" class="mt-4">
+        <div class="mb-3">
+            <label for="content" class="form-label">Yeni Yorum</label>
+            <textarea name="content" class="form-control" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Yorum Ekle</button>
+    </form>
+</div>
+{% endblock %}

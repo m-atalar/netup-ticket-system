@@ -40,3 +40,16 @@ class TicketLog(db.Model):
 
     user = db.relationship('User')
     ticket = db.relationship('Ticket')
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    ticket_id = db.Column(db.Integer, db.ForeignKey('ticket.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_comment_user_id'), nullable=False)
+
+    user = db.relationship('User', backref='comments')
+    ticket = db.relationship('Ticket', backref='comments')
+
+
